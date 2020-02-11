@@ -1,0 +1,285 @@
+<div class="app__content" [ngClass]="'app--' + gameLevel">
+    <header>
+        <h1>Minesweeper</h1>
+        <div class="menu">
+            <button #commandsButton type="button" class="button button--link" (click)="toggleGameCommandsModal()">Game commands</button>
+        </div>
+    </header>
+
+    <section class="board">
+        <header class="board__header">
+            <form>
+                <select class="board__level-control" name="gameLevel" [ngModel]="gameLevel"
+                    (ngModelChange)="onChangeGameLevel($event)">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </form>
+
+            <button class="board__face" (click)="createNewBoard()" #boardFace>
+                <img class="board__face-img" src="/assets/emojis/{{ emojiFace$ | async }}.png" alt="Face">
+            </button>
+
+            <div class="board__dynamic-infos">
+                <div class="board__dynamic-info">
+                    <img class="board__dynamic-info-img board__flag-img"
+                        src="/assets/emojis/triangular-flag-on-post.png" alt="Amount of flags left">
+                    <span class="board__dynamic-info-text">{{ flagsAvailable$ | async | stopwatch:'00' }}</span>
+                </div>
+
+                <div class="board__dynamic-info">
+                    <img class="board__dynamic-info-img board--stopwatch-img" src="/assets/emojis/stopwatch.png"
+                        alt="Timer">
+                    <span class="board__dynamic-info-text">{{ timer | stopwatch:'000'}}</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="board__main" [ngClass]="[gameStatus ? gameStatus : '']" #boardDOM>
+            <div class="board__inner" (contextmenu)="$event.preventDefault()">
+                <section *ngFor="let row of board; let y = index" class="row">
+                    <app-cell *ngFor="let cell of row; let x = index"
+                        [cell]="cell" [y]="y" [x]="x" [i]="(y * horizontal ) + x">
+                    </app-cell>
+                </section>
+            </div>
+        </main>
+
+        <footer class="board__footer">
+            <button type="button" class="cell board__new-game-button" (click)="createNewBoard()" #resetButton>
+                New game
+            </button>
+        </footer>
+    </section>
+
+    <section class="best-score">
+        <div class="best-score__title">
+            Your best scores
+        </div>
+        <div class="best-score__table-wrapper">
+            <table class="best-score__table">
+                <tr class="best-score__header-row">
+                    <th *ngFor="let key of objectKeys(bestScores)"
+                        width="{{ 100 / objectKeys(bestScores).length + '%' }}">
+                        {{ key | titlecase }}
+                    </th>
+                </tr>
+                <tr>
+                    <td *ngFor="let key of objectKeys(bestScores)">
+                        <ng-container *ngIf="bestScores[key] == 0 || bestScores[key]; else nullScore">
+                            {{ bestScores[key] | stopwatch:'000' }}
+                        </ng-container>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="text-center">
+            <div class="">
+                <a href="https://www.facebook.com/sharer.php?title=Play+a+different+version+of+the+classic+minesweeper+game!u=https://ofcode.com.br/projects/minesweeper"
+                    target="_blank" class="button button--regular button--regular-dark button--social">
+                    <span class="svg-icon svg-icon--light-accent svg-icon--md">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17,2V2H17V6H15C14.31,6 14,6.81 14,7.5V10H14L17,10V14H14V22H10V14H7V10H10V6A4,4 0 0,1 14,2H17Z"></path>
+                        </svg>
+                    </span>
+                    Share
+                </a>
+                <a href="https://twitter.com/intent/tweet?&via=0fc0de&url=https://ofcode.com.br/projects/minesweeper&text=Play+a+different+version+of+the+classic+minesweeper+game+built+with+angular!&hashtags=minesweeper,angular,javascript"
+                    target="_blank" class="button button--regular button--regular-dark button--social">
+                    <span class="svg-icon svg-icon--light-accent svg-icon--md">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.73,5.92 11.73,8.29C11.73,8.63 11.77,8.96 11.84,9.27C8.28,9.09 5.11,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.5 2.96,10.3 2.38,10C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.43,16 6,17.26 7.89,17.29C6.43,18.45 4.58,19.13 2.56,19.13C2.22,19.13 1.88,19.11 1.54,19.07C3.44,20.29 5.7,21 8.12,21C16,21 20.33,14.46 20.33,8.79C20.33,8.6 20.33,8.42 20.32,8.23C21.16,7.63 21.88,6.87 22.46,6Z"></path>
+                        </svg>
+                    </span>
+                    Twitte
+                </a>
+                <a href="https://github.com/manussakis/angular-minesweeper" target="_blank"
+                    class="button button--regular button--regular-dark button--social">
+                    <span class="svg-icon svg-icon--light-accent svg-icon--md">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12,2.2c-5.5,0-10,4.5-10,10c0,4.4,2.9,8.2,6.8,9.5c0.5,0.1,0.7-0.2,0.7-0.5c0-0.2,0-0.9,0-1.7c-2.8,0.6-3.4-1.3-3.4-1.3 C5.7,17.1,5,16.7,5,16.7c-0.9-0.6,0.1-0.6,0.1-0.6c1,0.1,1.5,1,1.5,1C7.5,18.7,9,18.2,9.5,18c0.1-0.6,0.4-1.1,0.6-1.3 c-2.2-0.2-4.6-1.1-4.6-4.9c0-1.1,0.4-2,1-2.7C6.6,8.8,6.2,7.7,6.8,6.4c0,0,0.8-0.3,2.8,1c0.8-0.2,1.6-0.3,2.5-0.3s1.7,0.1,2.5,0.3 c1.9-1.3,2.8-1,2.8-1c0.5,1.3,0.2,2.4,0.1,2.6c0.6,0.7,1,1.6,1,2.7c0,3.8-2.3,4.7-4.6,4.9c0.4,0.3,0.7,0.9,0.7,1.9 c0,1.3,0,2.4,0,2.7c0,0.3,0.2,0.6,0.7,0.5c4-1.3,6.8-5.1,6.8-9.5C22,6.7,17.5,2.2,12,2.2z"></path>
+                        </svg>
+                    </span>
+                    Github
+                </a>
+            </div>
+            <div class="colophon">
+                <p>
+                    Made with <a href="https://angular.io/" target="_blank">Angular</a> by <a href="https://github.com/Manussakis" target="_blank">Gabiel Manussakis</a><br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal" [ngClass]="{'modal-is-open': gameCommandsModalIsOpen}" (click)="toggleGameCommandsModal($event)">
+    <div class="modal__wrap">
+        <div class="modal__close" (click)="toggleGameCommandsModal()">
+            <svg viewBox="0 0 24 24">
+                <polygon points="19.7,5.7 18.3,4.3 12,10.6 5.7,4.3 4.3,5.7 10.6,12 4.3,18.3 5.7,19.7 12,13.4 18.3,19.7 19.7,18.3 13.4,12 "></polygon>
+            </svg>
+        </div>
+        <header id="modal-header" class="modal__header">
+            <h2 class="modal__title">Game commands</h2>
+        </header>
+        <div class="modal__body">
+            <div class="hide--gt-sm">
+                <section class="best-score">
+                    <div class="best-score__title">
+                        <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                            <svg viewBox="0 0 24 24">
+                                <defs>
+                                    <path id="a" d="M0 0h24v24H0V0z" />
+                                </defs>
+                                <clipPath id="b">
+                                    <use xlink:href="#a" overflow="visible" />
+                                </clipPath>
+                                <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z" clip-path="url(#b)" />
+                            </svg>
+                        </span>
+                        Touch
+                    </div>
+                    <div class="best-score__table-wrapper">
+                        <table class="best-score__table">
+                            <tr class="best-score__header-row">
+                                <th width="50%">Open cell</th>
+                                <th width="50%">Flag toggle</th>
+                            </tr>
+                            <tr>
+                                <td>Tap</td>
+                                <td>Press</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section class="best-score">
+                    <div class="best-score__title">
+                        <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M13 1.07V9h7c0-4.08-3.05-7.44-7-7.93zM4 15c0 4.42 3.58 8 8 8s8-3.58 8-8v-4H4v4zm7-13.93C7.05 1.56 4 4.92 4 9h7V1.07z" />
+                            </svg>
+                        </span>
+                        Mouse
+                    </div>
+                    <div class="best-score__table-wrapper">
+                        <table class="best-score__table">
+                            <tr class="best-score__header-row">
+                                <th width="50%">Open cell</th>
+                                <th width="50%">Flag toggle</th>
+                            </tr>
+                            <tr>
+                                <td>Left click</td>
+                                <td>Right click</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section class="best-score">
+                    <div class="best-score__title">
+                        <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z" />
+                                <path d="M0 0h24v24H0zm0 0h24v24H0z" fill="none" /></svg>
+                        </span>
+                        Keyboard
+                    </div>
+                    <div class="best-score__table-wrapper">
+                        <table class="best-score__table">
+                            <tr class="best-score__header-row">
+                                <th width="33.33%">Open cell</th>
+                                <th width="33.33%">Flag toggle</th>
+                                <th width="33.33%">Navigation</th>
+                            </tr>
+                            <tr>
+                                <td>Enter</td>
+                                <td>F</td>
+                                <td>Arrows</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+            </div>
+            <div class="hide show--gt-sm">
+                <section class="best-score">
+                    <div class="best-score__table-wrapper">
+                        <table class="best-score__table">
+                            <tr class="best-score__header-row">
+                                <th width="25%"></th>
+                                <th width="25%">
+                                    <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                                        <svg viewBox="0 0 24 24">
+                                            <defs>
+                                                <path id="a" d="M0 0h24v24H0V0z" />
+                                            </defs>
+                                            <clipPath id="b">
+                                                <use xlink:href="#a" overflow="visible" />
+                                            </clipPath>
+                                            <path
+                                                d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"
+                                                clip-path="url(#b)" />
+                                        </svg>
+                                    </span>
+                                    Touch
+                                </th>
+                                <th width="25%">
+                                    <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M0 0h24v24H0z" fill="none" />
+                                            <path
+                                                d="M13 1.07V9h7c0-4.08-3.05-7.44-7-7.93zM4 15c0 4.42 3.58 8 8 8s8-3.58 8-8v-4H4v4zm7-13.93C7.05 1.56 4 4.92 4 9h7V1.07z" />
+                                        </svg>
+                                    </span>
+                                    Mouse
+                                </th>
+                                <th width="25%">
+                                    <span class="svg-icon svg-icon--light-accent svg-icon--lg">
+                                        <svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z" />
+                                            <path d="M0 0h24v24H0zm0 0h24v24H0z" fill="none" /></svg>
+                                    </span>
+                                    Keyboard
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Open cell</th>
+                                <td>Tap</td>
+                                <td>Left click</td>
+                                <td>Enter</td>
+                            </tr>
+                            <tr>
+                                <th>Flag toggle</th>
+                                <td>Press</td>
+                                <td>Right click</td>
+                                <td>F</td>
+                            </tr>
+                            <tr>
+                                <th>Navigation</th>
+                                <td>&#x2205;</td>
+                                <td>&#x2205;</td>
+                                <td>Arrows</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <footer class="modal__footer">
+            <button #commandsModalButton type="button" class="button button--regular button--regular-default"
+                tabindex="-1" (keydown)="onCommandsModalButtonKeydown($event)" (click)="toggleGameCommandsModal()">
+                got it!
+            </button>
+        </footer>
+    </div>
+</div>
+
+<ng-template #nullScore> - </ng-template>

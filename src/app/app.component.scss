@@ -1,0 +1,22 @@
+.app__content {
+    width: 100%;
+    padding: 0 8px;
+    margin: 0 auto;
+    transition: max-width 0.2s ease-in-out;
+}
+
+.app {
+    &--easy {
+        max-width: 436px;
+        .cell {
+            width: 44px;
+            height: 44px;
+        }
+    }
+    &--medium {
+        max-width: 520px;
+    }
+    &--hard {
+        max-width: 940px;
+    }
+}

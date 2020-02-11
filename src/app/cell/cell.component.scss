@@ -1,0 +1,83 @@
+@import "../../scss/variables";
+@import "../../scss/util";
+
+.cell {
+    height: 30px;
+    width: 30px;
+    background-color: $grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include border-bevel($grey);
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 2px;
+    transition: width 0.2s ease-in-out, height 0.2s ease-in-out;
+
+    &:active {
+        @include border-emboss($grey);
+    }
+
+    &:focus {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.cell__image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+}
+
+.app--easy {
+    .cell__image {
+        width: 80%;
+        max-width: 80%;
+    }    
+}
+
+.opened {
+    background-color: shade($grey, 2%);
+    border-top: 1px solid shade($grey, 10%);
+    border-right: 1px solid shade($grey, 10%);
+    border-bottom: 1px solid shade($grey, 10%);
+    border-left: 1px solid shade($grey, 10%);
+    border-radius: 0;
+
+    @each $i, $color in $cell_colors {
+        &.opened-#{$i} {
+            color: $color;
+        }
+    }
+}
+
+.mine--exploded {
+    background-color: $alert;
+}
+
+.flag--wrong {
+    position: relative;
+    overflow: hidden;
+
+    &:after,
+    &:before {
+        content: "";
+        position: absolute;
+        height: 2px;
+        width: 150%;
+        left: 50%;
+        top: 50%;
+        background-color: shade($grey, 80%);
+    }
+
+    &:after {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &:before {
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+}

@@ -1,0 +1,36 @@
+<button #cellChild 
+    type="button"
+    class="cell"
+    [attr.data-y]="y"
+    [attr.data-x]="x"
+    [attr.data-i]="i"
+    [attr.data-cell]="cell"
+    (keydown)="onKeyDown($event)"
+    (press)="onPressCell()"
+    (mousedown)="onMouseDown($event)"
+    (mouseup)="onMouseUp($event)"
+    (contextmenu)="onInsertFlag($event)"
+    (click)="onOpenCell()"
+    [ngClass]="{
+        'opened': isOpened,
+        'flag': cellText === 'F',
+        'mine': isMine,
+        'mine--exploded': isMineExploded
+    }">
+
+    <ng-container [ngSwitch]="cellText">
+
+        <ng-container *ngSwitchCase="'M'">
+            <img class="cell__image" src="/assets/emojis/pile-of-poop.png" alt="Pile of poop">
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'F'">
+            <img class="cell__image" src="/assets/emojis/triangular-flag-on-post.png" alt="Flag">
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+            {{ cellText }}
+        </ng-container>
+
+    </ng-container>
+</button>

@@ -1,0 +1,29 @@
+@import "./variables";
+
+@function tint($color, $percentage) {
+  @return mix(white, $color, $percentage);
+}
+
+@function shade($color, $percentage) {
+  @return mix(black, $color, $percentage);
+}
+
+@mixin border-bevel($color) {
+  border-top: 2px solid tint($color, 80%);
+  border-right: 2px solid shade($color, 30%);
+  border-bottom: 2px solid shade($color, 40%);
+  border-left: 2px solid tint($color, 70%);
+}
+
+@mixin border-emboss($color) {
+  border-bottom: 2px solid tint($color, 80%);
+  border-left: 2px solid shade($color, 30%);
+  border-top: 2px solid shade($color, 40%);
+  border-right: 2px solid tint($color, 70%);
+}
+
+@mixin mq($mq) {
+  @media only screen and (min-width: #{$mq}) {
+    @content;
+  }
+}
