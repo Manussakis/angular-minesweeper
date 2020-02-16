@@ -18,18 +18,18 @@
             </form>
 
             <button class="board__face" (click)="createNewBoard()" #boardFace>
-                <img class="board__face-img" src="/assets/emojis/{{ emojiFace$ | async }}.png" alt="Face">
+                <img class="board__face-img" src="/projects/minesweeper/assets/emojis/{{ emojiFace$ | async }}.png" alt="Face">
             </button>
 
             <div class="board__dynamic-infos">
                 <div class="board__dynamic-info">
                     <img class="board__dynamic-info-img board__flag-img"
-                        src="/assets/emojis/triangular-flag-on-post.png" alt="Amount of flags left">
+                        src="/projects/minesweeper/assets/emojis/triangular-flag-on-post.png" alt="Amount of flags left">
                     <span class="board__dynamic-info-text">{{ flagsAvailable$ | async | stopwatch:'00' }}</span>
                 </div>
 
                 <div class="board__dynamic-info">
-                    <img class="board__dynamic-info-img board--stopwatch-img" src="/assets/emojis/stopwatch.png"
+                    <img class="board__dynamic-info-img board--stopwatch-img" src="/projects/minesweeper/assets/emojis/stopwatch.png"
                         alt="Timer">
                     <span class="board__dynamic-info-text">{{ timer | stopwatch:'000'}}</span>
                 </div>

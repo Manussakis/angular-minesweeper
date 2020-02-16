@@ -25,7 +25,7 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/projects/minesweeper/assets"
             ],
             "styles": [
               "src/styles.scss"
