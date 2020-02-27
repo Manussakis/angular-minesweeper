@@ -1,4 +1,4 @@
-![Minesweeper game](src/projects/minesweeper/assets/minesweeper.png)
+[![Minesweeper game](src/projects/minesweeper/assets/minesweeper.png)](https://ofcode.com.br/projects/minesweeper/)
 
 # Minesweeper
 A different version of the classic Minesweeper game built with Angular.
