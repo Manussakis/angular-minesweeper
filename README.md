@@ -1,3 +1,5 @@
+![Minesweeper game](src/projects/minesweeper/assets/minesweeper.png)
+
 # Minesweeper
 A different version of the classic Minesweeper game built with Angular.
 
