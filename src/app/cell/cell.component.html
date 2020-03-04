@@ -6,7 +6,7 @@
     [attr.data-i]="i"
     [attr.data-cell]="cell"
     (keydown)="onKeyDown($event)"
-    (press)="onPressCell()"
+    (press)="onPressCell($event)"
     (mousedown)="onMouseDown($event)"
     (mouseup)="onMouseUp($event)"
     (contextmenu)="onInsertFlag($event)"

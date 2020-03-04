@@ -158,7 +158,8 @@ export class CellComponent implements OnInit {
         }
     }
 
-    onPressCell(): void {
+    onPressCell(event): void {
+        event.preventDefault();
         const supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
         if (supportsTouch) {
             this.onInsertFlag();
