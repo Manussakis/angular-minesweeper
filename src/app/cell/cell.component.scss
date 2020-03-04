@@ -15,6 +15,7 @@
     border-radius: 4px;
     padding: 2px;
     transition: width 0.2s ease-in-out, height 0.2s ease-in-out;
+    user-select: none;
 
     &:active {
         @include border-emboss($grey);
