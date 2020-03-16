@@ -1,4 +1,5 @@
 <button #cellChild 
+    pressEventIndicator
     type="button"
     class="cell"
     [attr.data-y]="y"
@@ -6,11 +7,12 @@
     [attr.data-i]="i"
     [attr.data-cell]="cell"
     (keydown)="onKeyDown($event)"
-    (press)="onPressCell($event)"
+    (press)="onPress($event)"
+    (pressUp)="onPressUp()"
+    (click)="onClick()"
     (mousedown)="onMouseDown($event)"
     (mouseup)="onMouseUp($event)"
-    (contextmenu)="onInsertFlag($event)"
-    (click)="onOpenCell()"
+    (contextmenu)="onContextMenu($event)"    
     [ngClass]="{
         'opened': isOpened,
         'flag': cellText === 'F',

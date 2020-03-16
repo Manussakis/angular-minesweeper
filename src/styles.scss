@@ -76,7 +76,7 @@ th {
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    background-color: transparent;    
+    background-color: transparent;
 }
 
 .button--social {
@@ -120,7 +120,7 @@ th {
 .button--regular-default {
     background-color: $light-primary;
     color: white;
-    transition: box-shadow .2s ease-in-out;
+    transition: box-shadow 0.2s ease-in-out;
 
     &:hover,
     &:focus,
@@ -132,12 +132,12 @@ th {
 .button--regular-dark {
     background-color: $primary;
     color: $accent;
-    transition: box-shadow .2s ease-in-out, background-color .2s ease-in-out;
+    transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
 
     &:hover,
     &:focus,
     &:active {
-        background-color: tint($primary, 1%) ;
+        background-color: tint($primary, 1%);
         box-shadow: 1px 1px 6px 0 rgba(0, 0, 0, 0.5);
     }
 }
@@ -352,7 +352,7 @@ th {
     font-weight: 500;
     font-size: 16px;
     color: $primary;
-    
+
     a {
         color: $primary;
     }
@@ -476,5 +476,19 @@ th {
 
     @include mq($gt-sm) {
         margin-bottom: 0;
+    }
+}
+
+.press-event-indicator {
+    border-radius: 100px;
+    background-color: $primary;
+    position: fixed;
+    opacity: 0.5;
+    transform: scale(1);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+
+    &.active {
+        transform: scale(3);
+        opacity: 0;
     }
 }

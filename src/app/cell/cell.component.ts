@@ -27,7 +27,8 @@ export class CellComponent implements OnInit {
     isMineExploded: boolean;
 
     private _gameStatus$: Subscription;
-    private _isAfterPressEvent: boolean = false;
+    private _timeWhenPressed: Date;
+    private _isAfterPressEvent = false;
 
     constructor(
         private _minesweeper: MinesweeperService,
@@ -41,68 +42,13 @@ export class CellComponent implements OnInit {
         }
     }
 
-    onOpenCell(): void {
-        if (this._isAfterPressEvent) {
-            this._isAfterPressEvent = false;
+    onClick() {
+        const timeWhenClicked = new Date();
 
+        if (this._isGhostClick(timeWhenClicked)) {
             return;
-        }
-
-        if (this._isUnavailableToOpen()) {
-            return;
-        }
-
-        if (this.cell === CellCodeEnum.Mine) {
-            this.isMineExploded = true;
-            this._minesweeper.setGameStatus(GameStatusEnum.Lost);
-
-            return;
-        }
-
-        this._minesweeper.setGameStatus(GameStatusEnum.Running);
-
-        // Force the cell to have the opened class immediately.
-        // This will be useful when count the opened cells amount
-        this._renderer2.addClass(this.cellChild.nativeElement, 'opened');
-        this.isOpened = true;
-
-        if (this.cell === 0) {
-            this._openAroundZerosCell();
-            this._updateRemainingEmptyCells();
         } else {
-            this.cellText = this.cell.toString();
-            this._renderer2.addClass(this.cellChild.nativeElement, `opened-${this.cell}`);
-            this._minesweeper.decreaseRemainingEmptyCells(1);
-        }
-    }
-
-    onInsertFlag(event?: Event): void {
-        if (event) {
-            event.preventDefault();
-        }
-
-        if (this._isAfterPressEvent) {
-            this._isAfterPressEvent = false;
-
-            return;
-        }
-
-        if (this._isUnavailableToFlag()) {
-            return;
-        }
-
-        if (this.cellText === CellCodeEnum.Flag) {
-            this.cellText = '';
-            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue + 1);
-            if (this.cell !== CellCodeEnum.Mine) {
-                this._gameStatus$.unsubscribe();
-            }
-        } else {
-            this.cellText = CellCodeEnum.Flag;
-            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue - 1);
-            if (this.cell !== CellCodeEnum.Mine) {
-                this._gameStatusSubscription();
-            }
+            this._openCell();
         }
     }
 
@@ -154,17 +100,32 @@ export class CellComponent implements OnInit {
             setTimeout(() => this._appComponent.resetButton.nativeElement.focus(), 200);
 
         } else if (event.key === 'f') {
-            this.onInsertFlag();
+            this._insertFlag();
         }
     }
 
-    onPressCell(event): void {
+    onPress(event): void {
         event.preventDefault();
-        const supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
-        if (supportsTouch) {
-            this.onInsertFlag();
-            this._isAfterPressEvent = true;
+
+        if (this._supportsTouch()) {
+            this._insertFlag();
         }
+    }
+
+    onPressUp() {
+        this._timeWhenPressed = new Date();
+        this._isAfterPressEvent = true;
+    }
+
+    onContextMenu(event) {
+        event.preventDefault();
+        if (this._isAfterPressEvent || event.button === 0) {            
+            this._isAfterPressEvent = false;
+            
+            return false;
+        }
+
+        this._insertFlag(event);
     }
 
     onMouseDown(event): void {
@@ -177,6 +138,65 @@ export class CellComponent implements OnInit {
         if (!this._isUnavailableToOpen() && event.button === 0) {
             this._minesweeper.setEmojiFace(EmojisEnum.GrinningFace);
         }
+    }
+
+    private _openCell(): void {
+        if (this._isUnavailableToOpen()) {
+            return;
+        }
+
+        if (this.cell === CellCodeEnum.Mine) {
+            this.isMineExploded = true;
+            this._minesweeper.setGameStatus(GameStatusEnum.Lost);
+
+            return;
+        }
+
+        this._minesweeper.setGameStatus(GameStatusEnum.Running);
+
+        // Force the cell to have the opened class immediately.
+        // This will be useful when count the opened cells amount
+        this._renderer2.addClass(this.cellChild.nativeElement, 'opened');
+        this.isOpened = true;
+
+        if (this.cell === 0) {
+            this._openAroundZerosCell();
+            this._updateRemainingEmptyCells();
+        } else {
+            this.cellText = this.cell.toString();
+            this._renderer2.addClass(this.cellChild.nativeElement, `opened-${this.cell}`);
+            this._minesweeper.decreaseRemainingEmptyCells(1);
+        }
+    }
+
+    private _insertFlag(event?: Event): void {
+        if (event) {
+            event.preventDefault();
+        }
+
+        if (this._isUnavailableToFlag()) {
+            return;
+        }
+
+        if (this.cellText === CellCodeEnum.Flag) {
+            this.cellText = '';
+            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue + 1);
+            if (this.cell !== CellCodeEnum.Mine) {
+                this._gameStatus$.unsubscribe();
+            }
+        } else {
+            this.cellText = CellCodeEnum.Flag;
+            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue - 1);
+            if (this.cell !== CellCodeEnum.Mine) {
+                this._gameStatusSubscription();
+            }
+        }
+
+        this._minesweeper.setEmojiFace(EmojisEnum.GrinningFace);
+    }
+
+    private _supportsTouch(): boolean {
+        return 'ontouchstart' in window || navigator.msMaxTouchPoints > 0 || navigator.maxTouchPoints > 0;
     }
 
     private _isUnavailableToFlag(): boolean {
@@ -270,5 +290,9 @@ export class CellComponent implements OnInit {
             this.cellText === CellCodeEnum.Flag ||
             this._minesweeper.gameStatusValue === GameStatusEnum.Lost ||
             this._minesweeper.gameStatusValue === GameStatusEnum.Won
+    }
+
+    private _isGhostClick(timeWhenClicked): boolean {
+        return this._timeWhenPressed && timeWhenClicked.getTime() - this._timeWhenPressed.getTime() <= 250
     }
 }
