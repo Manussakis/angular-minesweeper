@@ -17,7 +17,7 @@
                 </select>
             </form>
 
-            <button class="board__face" (click)="createNewBoard()" #boardFace>
+            <button class="board__face" (click)="createNewEmptyBoard()" #boardFace>
                 <img class="board__face-img" src="/projects/minesweeper/assets/emojis/{{ emojiFace$ | async }}.png" alt="Face">
             </button>
 
@@ -37,17 +37,17 @@
         </header>
 
         <main class="board__main" [ngClass]="[gameStatus ? gameStatus : '']" #boardDOM>
-            <div class="board__inner" (contextmenu)="$event.preventDefault()">
-                <section *ngFor="let row of board; let y = index" class="row">
-                    <app-cell *ngFor="let cell of row; let x = index"
-                        [cell]="cell" [y]="y" [x]="x" [i]="(y * horizontal ) + x">
+            <div class="board__inner" (contextmenu)="onContextMenu($event)">
+                <section *ngFor="let row of boardParsed; trackBy: trackByRow" class="row">
+                    <app-cell *ngFor="let cell of row; trackBy: trackByCell"
+                        [cell]="cell" (open)="onOpenCell($event)">
                     </app-cell>
                 </section>
             </div>
         </main>
 
         <footer class="board__footer">
-            <button type="button" class="cell board__new-game-button" (click)="createNewBoard()" #resetButton>
+            <button type="button" class="cell board__new-game-button" (click)="createNewEmptyBoard()" #resetButton>
                 New game
             </button>
         </footer>

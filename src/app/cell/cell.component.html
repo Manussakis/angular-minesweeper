@@ -1,11 +1,8 @@
-<button #cellChild 
+<button
     pressEventIndicator
     type="button"
-    class="cell"
-    [attr.data-y]="y"
-    [attr.data-x]="x"
-    [attr.data-i]="i"
-    [attr.data-cell]="cell"
+    class="cell {{cell.openedIdClassName}}"
+    [attr.data-i]="cell.i"
     (keydown)="onKeyDown($event)"
     (press)="onPress($event)"
     (pressUp)="onPressUp()"
@@ -14,13 +11,14 @@
     (mouseup)="onMouseUp($event)"
     (contextmenu)="onContextMenu($event)"    
     [ngClass]="{
-        'opened': isOpened,
-        'flag': cellText === 'F',
-        'mine': isMine,
-        'mine--exploded': isMineExploded
+        'opened': cell.isOpened,
+        'flag': cell.label === 'F',
+        'mine': cell.isMine,
+        'mine--exploded': cell.isMineExploded,
+        'flag--wrong': cell.isWrongFlag
     }">
 
-    <ng-container [ngSwitch]="cellText">
+    <ng-container [ngSwitch]="cell.label">
 
         <ng-container *ngSwitchCase="'M'">
             <img class="cell__image" src="/projects/minesweeper/assets/emojis/pile-of-poop.png" alt="Pile of poop">
@@ -31,7 +29,7 @@
         </ng-container>
 
         <ng-container *ngSwitchDefault>
-            {{ cellText }}
+            {{ cell.label }}
         </ng-container>
 
     </ng-container>
