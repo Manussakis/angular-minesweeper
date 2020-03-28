@@ -154,7 +154,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 .subscribe(() => this._openCell(clickedCellCoord));
             this._minesweeper.isFirstClickInCell = false;
             this._minesweeper.populateEmptyBoard(clickedCellCoord);
-        } else {
+        } else if (this._isCellOpened(clickedCellCoord)) {
+            this._manageCellsAround(clickedCellCoord);
+        }
+        else {
             this._openCell(clickedCellCoord);
         }
     }
@@ -227,7 +230,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private _openCell(clickedCellCoord: number[]): void {
-        const cellData = this._getCellDataByCoord(clickedCellCoord)
+        const cellData = this._getCellDataByCoord(clickedCellCoord);
 
         if (cellData.type === CellCodeEnum.Mine) {
             cellData.isMineExploded = true;
@@ -241,7 +244,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         cellData.isOpened = true;
 
         if (cellData.type === 0) {
-            this._openAroundZerosCell(cellData);
+            this._openCellsAroundZero(cellData);
             this._updateRemainingEmptyCells();
         } else {
             cellData.label = cellData.type.toString();
@@ -258,32 +261,28 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         minesweeper.setRemainEmptyCells(remainEmptyCells);
     }
 
-    private _openAroundZerosCell(clickedCellData: ICellData): void {
+    private _openCellsAroundZero(clickedCellData: ICellData): void {
         clickedCellData.isCenterZero = true;
 
         while (clickedCellData) {
             clickedCellData.openedIdClassName = "";
-            const centerZeroCoord = [clickedCellData.y, clickedCellData.x];
 
             for (let i = 0; i < AROUND_CELL_OPERATORS.length; i++) {
-                const aroundGetter = AROUND_CELL_OPERATORS[i];
-                const cellAroundY = centerZeroCoord[0] + aroundGetter[0];
-                const cellAroundX = centerZeroCoord[1] + aroundGetter[1];
+                const cellAroundCoords = this._getCellAroundCoordByCenterCellCoord(i, [clickedCellData.y, clickedCellData.x]);
 
-                if (cellAroundY >= 0 && cellAroundY < this._minesweeper.vertical &&
-                    cellAroundX >= 0 && cellAroundX < this._minesweeper.horizontal) {
-                    const cellAroundDOM = this.boardParsed[cellAroundY][cellAroundX];
+                if (this._isThereCellAround(cellAroundCoords)) {
+                    const cellAroundData = this._getCellDataByCoord(cellAroundCoords);
 
-                    if (cellAroundDOM.label !== CellCodeEnum.Flag) {
-                        if (cellAroundDOM.type === 0) {
-                            if (!cellAroundDOM.isCenterZero) {
-                                cellAroundDOM.isOpened = true;
-                                cellAroundDOM.openedIdClassName = "opened-0";
+                    if (cellAroundData.label !== CellCodeEnum.Flag) {
+                        if (cellAroundData.type === 0) {
+                            if (!cellAroundData.isCenterZero) {
+                                cellAroundData.isOpened = true;
+                                cellAroundData.openedIdClassName = "opened-0";
                             }
-                        } else if (!cellAroundDOM.isOpened) {
-                            cellAroundDOM.label = cellAroundDOM.type.toString();
-                            cellAroundDOM.isOpened = true;
-                            cellAroundDOM.openedIdClassName = `opened-${cellAroundDOM.type}`;
+                        } else if (!cellAroundData.isOpened) {
+                            cellAroundData.label = cellAroundData.type.toString();
+                            cellAroundData.isOpened = true;
+                            cellAroundData.openedIdClassName = `opened-${cellAroundData.type}`;
                         }
                     }
                 }
@@ -295,6 +294,82 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 clickedCellData.isCenterZero = true;
             }
         }
+    }
+
+    private _isCellOpened(cellCoord) {
+        return this._getCellDataByCoord(cellCoord).isOpened;
+    }
+
+    private _manageCellsAround(clickedCellCoord: number[]): void {
+        const cellData = this._getCellDataByCoord(clickedCellCoord);
+        const cellType = (cellData.type as number);
+
+        if (!isNaN(cellType) && cellType != 0) {
+            let flagsAroundLength = this._getFlagsAroundLength(clickedCellCoord);
+
+            if (cellType === flagsAroundLength) {
+                this._openCellsAround(clickedCellCoord);
+            }
+        }
+    }
+
+    private _getFlagsAroundLength(clickedCellCoord: number[]): number {
+        let flagsAroundLength = 0;
+
+        for (let i = 0; i < AROUND_CELL_OPERATORS.length; i++) {
+            const cellAroundCoords = this._getCellAroundCoordByCenterCellCoord(i, clickedCellCoord);
+
+            if (this._isThereCellAround(cellAroundCoords)) {
+                const cellAroundData = this._getCellDataByCoord(cellAroundCoords);
+
+                if (cellAroundData.label === CellCodeEnum.Flag) {
+                    flagsAroundLength++;
+                }
+            }
+        }
+
+        return flagsAroundLength;
+    }
+
+    private _getCellAroundCoordByCenterCellCoord(index: number, centerCellCoord: number[]): number[] {
+        const aroundGetter = AROUND_CELL_OPERATORS[index];
+        const cellAroundY = centerCellCoord[0] + aroundGetter[0];
+        const cellAroundX = centerCellCoord[1] + aroundGetter[1];
+
+        return [cellAroundY, cellAroundX];
+    }
+
+    private _openCellsAround(clickedCellCoord: number[]) {
+        let willLost = false;
+
+        for (let i = 0; i < AROUND_CELL_OPERATORS.length; i++) {
+            const cellAroundCoords = this._getCellAroundCoordByCenterCellCoord(i, clickedCellCoord);
+
+            if (this._isThereCellAround(cellAroundCoords)) {
+                const cellAroundData = this._getCellDataByCoord(cellAroundCoords);
+
+                if (cellAroundData.label === CellCodeEnum.Flag || cellAroundData.isOpened) {
+                    continue;
+                }
+
+                if (cellAroundData.type === CellCodeEnum.Mine && !willLost) {
+                    willLost = true;
+
+                    continue;
+                }
+
+                this._openCell(cellAroundCoords);
+            }
+        }
+
+        if (willLost) {
+            this._minesweeper.setGameStatus(GameStatusEnum.Lost);
+        }
+    }
+
+    private _isThereCellAround(cellAroundCoords: number[]): boolean {
+        return cellAroundCoords[0] >= 0 && cellAroundCoords[0] < this._minesweeper.vertical &&
+            cellAroundCoords[1] >= 0 && cellAroundCoords[1] < this._minesweeper.horizontal;
     }
 
     private _findCellDataByKeyValue(key: string, value: any): ICellData {

@@ -192,8 +192,7 @@ export class CellComponent implements OnChanges {
     }
 
     private _isUnavailableToOpen(): boolean {
-        return this.cell.isOpened ||
-            this.cell.label === CellCodeEnum.Flag ||
+        return this.cell.label === CellCodeEnum.Flag ||
             this._minesweeper.gameStatusValue === GameStatusEnum.Lost ||
             this._minesweeper.gameStatusValue === GameStatusEnum.Won
     }
