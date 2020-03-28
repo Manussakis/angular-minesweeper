@@ -67,15 +67,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (gameLevelSelected === GameLevelEnum.Easy) {
                     this._vertical = 9;
                     this._horizontal = 9;
-                    this._minesLength = 5;
+                    this._minesLength = 10;
                 } else if (gameLevelSelected === GameLevelEnum.Medium) {
                     this._vertical = 16;
                     this._horizontal = 16;
-                    this._minesLength = 5;
+                    this._minesLength = 40;
                 } else if (gameLevelSelected === GameLevelEnum.Hard) {
                     this._vertical = 16;
                     this._horizontal = 30;
-                    this._minesLength = 8;
+                    this._minesLength = 99;
                 }
 
                 this.gameLevel = gameLevelSelected;
