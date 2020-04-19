@@ -1,4 +1,4 @@
-import { Component, Input, Host, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges, OnDestroy } from '@angular/core';
+import { Component, Input, Host, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MinesweeperService } from '../services/minesweeper.service';
 import { AppComponent } from '../app.component';
