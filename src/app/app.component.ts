@@ -154,7 +154,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 .subscribe(() => this._openCell(clickedCellCoord));
             this._minesweeper.isFirstClickInCell = false;
             this._minesweeper.populateEmptyBoard(clickedCellCoord);
-        } else if (this._isCellOpened(clickedCellCoord)) {
+        }
+        else if (this._isCellOpened(clickedCellCoord)) {
             this._manageCellsAround(clickedCellCoord);
         }
         else {
