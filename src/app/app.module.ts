@@ -3,9 +3,8 @@ import { NgModule, Injectable } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { CellComponent } from './cell/cell.component';
-import { StopwatchPipe } from './pipes/stopwatch.pipe';
-import { PressEventIndicatorDirective } from './directives/press-event-indicator.directive';
 import * as Hammer from 'hammerjs';
+import { SharedModule } from './shared/shared.module';
 
 @Injectable()
 export class MinesweeperHammerConfig extends HammerGestureConfig {
@@ -21,13 +20,12 @@ export class MinesweeperHammerConfig extends HammerGestureConfig {
     declarations: [
         AppComponent,
         CellComponent,
-        StopwatchPipe,
-        PressEventIndicatorDirective,
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HammerModule,
+        SharedModule
     ],
     bootstrap: [AppComponent],
     providers: [{
