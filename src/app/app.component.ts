@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2, HostListener, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { Subject, Observable, Subscription, timer, BehaviorSubject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, filter, skip, delay, take } from 'rxjs/operators';
-import { MinesweeperService } from './services/minesweeper.service';
-import { ScoreService } from './services/score.service';
+import { MinesweeperService } from './core/minesweeper.service';
+import { ScoreService } from './core/score.service';
 import { GameStatusEnum, EmojisEnum, GameLevelEnum, CellCodeEnum } from './enums';
 import { ICellStructure as ICellData, IBoardData } from './interfaces';
 import { AROUND_CELL_OPERATORS } from './consts';

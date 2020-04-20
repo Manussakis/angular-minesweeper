@@ -4,9 +4,7 @@ import { EmojisEnum, CellCodeEnum, GameStatusEnum } from '../enums';
 import { AROUND_CELL_OPERATORS } from '../consts';
 import { IBoardData } from '../interfaces';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class MinesweeperService {
     vertical: number;
     horizontal: number;

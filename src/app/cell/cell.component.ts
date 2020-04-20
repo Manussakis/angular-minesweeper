@@ -1,6 +1,6 @@
 import { Component, Input, Host, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MinesweeperService } from '../services/minesweeper.service';
+import { MinesweeperService } from '../core/minesweeper.service';
 import { AppComponent } from '../app.component';
 import { EmojisEnum, CellCodeEnum, GameStatusEnum } from '../enums';
 import { ICellStructure } from '../interfaces';

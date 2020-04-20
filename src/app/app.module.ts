@@ -6,6 +6,7 @@ import { CellComponent } from './cell/cell.component';
 import * as Hammer from 'hammerjs';
 import { BestScoresTableModule } from './best-scores-table/best-scores-table.module';
 import { SharedModule } from './shared/shared.module';
+import { CoreModule } from './core/core.module';
 
 @Injectable()
 export class MinesweeperHammerConfig extends HammerGestureConfig {
@@ -26,8 +27,9 @@ export class MinesweeperHammerConfig extends HammerGestureConfig {
         BrowserModule,
         FormsModule,
         HammerModule,
+        CoreModule,
+        SharedModule,
         BestScoresTableModule,
-        SharedModule
     ],
     bootstrap: [AppComponent],
     providers: [{

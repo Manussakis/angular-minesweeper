@@ -7,9 +7,7 @@ export interface IBestScores {
     hard: number | null;
 }
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class ScoreService {
     private _bestScores: BehaviorSubject<IBestScores>;
     private _minesweeperBestScores = 'minesweeperBestScores';

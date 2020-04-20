@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IBestScores, ScoreService } from '../services/score.service';
+import { IBestScores, ScoreService } from '../core/score.service';
 import { tap } from 'rxjs/operators';
 
 @Component({
