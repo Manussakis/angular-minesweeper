@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { CellComponent } from './cell/cell.component';
 import * as Hammer from 'hammerjs';
+import { BestScoresTableModule } from './best-scores-table/best-scores-table.module';
 import { SharedModule } from './shared/shared.module';
 
 @Injectable()
@@ -25,6 +26,7 @@ export class MinesweeperHammerConfig extends HammerGestureConfig {
         BrowserModule,
         FormsModule,
         HammerModule,
+        BestScoresTableModule,
         SharedModule
     ],
     bootstrap: [AppComponent],

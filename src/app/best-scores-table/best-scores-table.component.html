@@ -1,0 +1,24 @@
+<section class="best-score" *ngIf="bestScores$ | async as bestScores">
+    <div class="best-score__title">
+        Your best scores
+    </div>
+    <div class="best-score__table-wrapper">
+        <table class="best-score__table">
+            <tr class="best-score__header-row">
+                <th *ngFor="let key of bestScoresKeys"
+                    width="{{ 100 / bestScoresKeys.length + '%' }}">
+                    {{ key | titlecase }}
+                </th>
+            </tr>
+            <tr>
+                <td *ngFor="let key of bestScoresKeys">
+                    <ng-container *ngIf="bestScores[key] == 0 || bestScores[key]; else nullScore">
+                        {{ bestScores[key] | stopwatch:'000' }}
+                    </ng-container>
+                </td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<ng-template #nullScore> - </ng-template>

@@ -53,28 +53,7 @@
         </footer>
     </section>
 
-    <section class="best-score">
-        <div class="best-score__title">
-            Your best scores
-        </div>
-        <div class="best-score__table-wrapper">
-            <table class="best-score__table">
-                <tr class="best-score__header-row">
-                    <th *ngFor="let key of objectKeys(bestScores)"
-                        width="{{ 100 / objectKeys(bestScores).length + '%' }}">
-                        {{ key | titlecase }}
-                    </th>
-                </tr>
-                <tr>
-                    <td *ngFor="let key of objectKeys(bestScores)">
-                        <ng-container *ngIf="bestScores[key] == 0 || bestScores[key]; else nullScore">
-                            {{ bestScores[key] | stopwatch:'000' }}
-                        </ng-container>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </section>
+    <app-best-scores-table></app-best-scores-table>
 </div>
 
 <footer class="footer">
@@ -280,5 +259,3 @@
         </footer>
     </div>
 </div>
-
-<ng-template #nullScore> - </ng-template>

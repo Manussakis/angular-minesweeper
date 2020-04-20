@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2, HostLis
 import { Subject, Observable, Subscription, timer, BehaviorSubject } from 'rxjs';
 import { takeUntil, distinctUntilChanged, filter, skip, delay, take } from 'rxjs/operators';
 import { MinesweeperService } from './services/minesweeper.service';
-import { ScoreService, IBestScores } from './services/score.service';
+import { ScoreService } from './services/score.service';
 import { GameStatusEnum, EmojisEnum, GameLevelEnum, CellCodeEnum } from './enums';
 import { ICellStructure as ICellData, IBoardData } from './interfaces';
 import { AROUND_CELL_OPERATORS } from './consts';
@@ -31,9 +31,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     gameStatus: string | undefined;
     flagsAvailable$: Observable<number>;
     timer: number = 0;
-    bestScores: IBestScores;
     emojiFace$ = this._minesweeper.emojiFace$;
-    objectKeys = Object.keys;
     gameCommandsModalIsOpen: boolean;
 
     private _gameCommandsModalIsOpen$ = new BehaviorSubject(false);
@@ -112,11 +110,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 distinctUntilChanged(),
                 filter(length => length === 0)
             )
-            .subscribe(() => this._minesweeper.setGameStatus(GameStatusEnum.Won));
-
-        this._score.bestScores$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(bestScores => this.bestScores = bestScores);
+            .subscribe(() => this._minesweeper.setGameStatus(GameStatusEnum.Won));        
     }
 
     ngAfterViewInit(): void {
