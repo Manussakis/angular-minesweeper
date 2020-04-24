@@ -170,7 +170,7 @@ export class CellComponent implements OnChanges {
 
     private _gameStatusSubscription(): void {
         this._gameStatus$ = this._minesweeper.gameStatus$
-            .subscribe((status: string | undefined) => {
+            .subscribe((status: GameStatusEnum | undefined) => {
                 if (status === GameStatusEnum.Lost) {
                     if (this.cell.label === CellCodeEnum.Flag) {
                         if (this.cell.type !== CellCodeEnum.Mine) {
