@@ -4,6 +4,7 @@ import { MinesweeperService } from '../core/minesweeper.service';
 import { AppComponent } from '../app.component';
 import { EmojisEnum, CellCodeEnum, GameStatusEnum } from '../enums';
 import { ICellStructure } from '../interfaces';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'app-cell',
@@ -170,6 +171,7 @@ export class CellComponent implements OnChanges {
 
     private _gameStatusSubscription(): void {
         this._gameStatus$ = this._minesweeper.gameStatus$
+            .pipe(filter(status => status === GameStatusEnum.Lost || status === GameStatusEnum.Won))
             .subscribe((status: GameStatusEnum | undefined) => {
                 if (status === GameStatusEnum.Lost) {
                     if (this.cell.label === CellCodeEnum.Flag) {
@@ -181,13 +183,11 @@ export class CellComponent implements OnChanges {
                         this.cell.isMine = true;
                         this.cell.label = this.cell.type.toString();
                     }
-
-                    this._gameStatus$.unsubscribe();
-
-                } else if (status === GameStatusEnum.Won) {
+                } else {
                     this.cell.label = CellCodeEnum.Flag;
-                    this._gameStatus$.unsubscribe();
                 }
+
+                this._gameStatus$.unsubscribe();
             });
     }
 
