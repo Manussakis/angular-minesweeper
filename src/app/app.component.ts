@@ -161,6 +161,14 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this._gameLevel$.next(levelSelected);
     }
 
+    onChangeFlagsAvailable(flagsAvailable: number): void {
+        this._minesweeper.setFlagsAvailable(flagsAvailable);
+    }
+
+    onChangeEmojiFace(emojiFace: EmojisEnum): void {
+        this._minesweeper.setEmojiFace(emojiFace);
+    }
+
     toggleGameCommandsModal(event?: Event): void {
         if (event && event.target !== event.currentTarget) {
             return;

@@ -15,6 +15,8 @@ import { filter } from 'rxjs/operators';
 export class CellComponent implements OnChanges {
     @Input() cell: ICellStructure;
     @Output() open = new EventEmitter<number[]>();
+    @Output() changeFlagsAvailable = new EventEmitter<number>();
+    @Output() changeEmojiFace = new EventEmitter<EmojisEnum>();
 
     private _gameStatus$: Subscription;
     private _timeWhenPressed: Date;
@@ -122,13 +124,13 @@ export class CellComponent implements OnChanges {
 
     onMouseDown(event): void {
         if (!this._isUnavailableToOpen() && event.button === 0 && this.cell.label !== CellCodeEnum.Flag) {
-            this._minesweeper.setEmojiFace(EmojisEnum.FearfulFace);
+            this.changeEmojiFace.emit(EmojisEnum.FearfulFace);
         }
     }
 
     onMouseUp(event): void {
         if (!this._isUnavailableToOpen() && event.button === 0) {
-            this._minesweeper.setEmojiFace(EmojisEnum.GrinningFace);
+            this.changeEmojiFace.emit(EmojisEnum.GrinningFace);
         }
     }
 
@@ -143,19 +145,19 @@ export class CellComponent implements OnChanges {
 
         if (this.cell.label === CellCodeEnum.Flag) {
             this.cell.label = '';
-            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue + 1);
+            this.changeFlagsAvailable.emit(this._minesweeper.flagsAvailableValue + 1);            
             if (this.cell.type !== CellCodeEnum.Mine) {
                 this._gameStatus$.unsubscribe();
             }
         } else {
             this.cell.label = CellCodeEnum.Flag;
-            this._minesweeper.setFlagsAvailable(this._minesweeper.flagsAvailableValue - 1);
+            this.changeFlagsAvailable.emit(this._minesweeper.flagsAvailableValue - 1);
             if (this.cell.type !== CellCodeEnum.Mine) {
                 this._gameStatusSubscription();
             }
         }
 
-        this._minesweeper.setEmojiFace(EmojisEnum.GrinningFace);
+        this.changeEmojiFace.emit(EmojisEnum.GrinningFace);
     }
 
     private _supportsTouch(): boolean {
