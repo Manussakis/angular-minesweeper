@@ -1,7 +1,6 @@
 import { Component, Input, Host, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MinesweeperService } from '../core/minesweeper.service';
-import { AppComponent } from '../app.component';
 import { EmojisEnum, CellCodeEnum, GameStatusEnum } from '../enums';
 import { ICellStructure } from '../interfaces';
 import { filter } from 'rxjs/operators';
@@ -14,20 +13,23 @@ import { filter } from 'rxjs/operators';
 })
 export class CellComponent implements OnChanges {
     @Input() cell: ICellStructure;
+    @Input() horizontal: number;
+    @Input() vertical: number;
+
     @Output() open = new EventEmitter<number[]>();
     @Output() changeFlagsAvailable = new EventEmitter<number>();
     @Output() changeEmojiFace = new EventEmitter<EmojisEnum>();
+    @Output() focusCell = new EventEmitter<number>();
+    @Output() focusBoardFace = new EventEmitter<any>();
+    @Output() focusResetButton = new EventEmitter<any>();
 
     private _gameStatus$: Subscription;
     private _timeWhenPressed: Date;
     private _isAfterPressEvent = false;
 
-    constructor(
-        private _minesweeper: MinesweeperService,
-        @Host() private _appComponent: AppComponent,
-    ) { }
+    constructor(private _minesweeper: MinesweeperService) { }
 
-    ngOnChanges(changes: SimpleChanges): void {        
+    ngOnChanges(changes: SimpleChanges): void {
         if (this._gameStatus$) {
             this._gameStatus$.unsubscribe();
         }
@@ -49,9 +51,9 @@ export class CellComponent implements OnChanges {
     onKeyDown(event: KeyboardEvent): void {
         const directions = {
             'ArrowLeft': { step: () => -1, orientation: 'horizontal' },
-            'ArrowUp': { step: () => -this._minesweeper.horizontal, orientation: 'vertical' },
+            'ArrowUp': { step: () => -this.horizontal, orientation: 'vertical' },
             'ArrowRight': { step: () => 1, orientation: 'horizontal' },
-            'ArrowDown': { step: () => this._minesweeper.horizontal, orientation: 'vertical' },
+            'ArrowDown': { step: () => this.horizontal, orientation: 'vertical' },
             'default': { step: () => false },
         }
 
@@ -65,13 +67,13 @@ export class CellComponent implements OnChanges {
             let rangeEndIndex: number;
 
             if (orientation === 'horizontal') {
-                rangeStartIndex = this.cell.y * this._minesweeper.horizontal;
-                rangeEndIndex = rangeStartIndex + (this._minesweeper.horizontal - 1);
+                rangeStartIndex = this.cell.y * this.horizontal;
+                rangeEndIndex = rangeStartIndex + (this.horizontal - 1);
             }
 
             if (orientation === 'vertical') {
                 rangeStartIndex = this.cell.x;
-                rangeEndIndex = (this._minesweeper.vertical * this._minesweeper.horizontal) - (this._minesweeper.horizontal - this.cell.x);
+                rangeEndIndex = (this.vertical * this.horizontal) - (this.horizontal - this.cell.x);
             }
 
             if (nextCellIndex < rangeStartIndex) {
@@ -82,16 +84,15 @@ export class CellComponent implements OnChanges {
                 nextCellIndex = rangeStartIndex;
             }
 
-            const nextCell = this._appComponent.boardDOM.nativeElement.querySelector(`[data-i="${nextCellIndex}"]`);
-            nextCell.focus();
+            this.focusCell.emit(nextCellIndex);
 
         } else if (event.shiftKey && event.key === 'Tab') {
             event.preventDefault();
-            setTimeout(() => this._appComponent.boardFace.nativeElement.focus(), 200);
+            this.focusBoardFace.emit();
 
         } else if (event.key === 'Tab') {
             event.preventDefault();
-            setTimeout(() => this._appComponent.resetButton.nativeElement.focus(), 200);
+            this.focusResetButton.emit();
 
         } else if (event.key === 'f') {
             this._insertFlag();
@@ -145,7 +146,7 @@ export class CellComponent implements OnChanges {
 
         if (this.cell.label === CellCodeEnum.Flag) {
             this.cell.label = '';
-            this.changeFlagsAvailable.emit(this._minesweeper.flagsAvailableValue + 1);            
+            this.changeFlagsAvailable.emit(this._minesweeper.flagsAvailableValue + 1);
             if (this.cell.type !== CellCodeEnum.Mine) {
                 this._gameStatus$.unsubscribe();
             }
@@ -174,7 +175,7 @@ export class CellComponent implements OnChanges {
     private _gameStatusSubscription(): void {
         this._gameStatus$ = this._minesweeper.gameStatus$
             .pipe(filter(status => status === GameStatusEnum.Lost || status === GameStatusEnum.Won))
-            .subscribe((status: GameStatusEnum | undefined) => {
+            .subscribe((status: GameStatusEnum) => {
                 if (status === GameStatusEnum.Lost) {
                     if (this.cell.label === CellCodeEnum.Flag) {
                         if (this.cell.type !== CellCodeEnum.Mine) {

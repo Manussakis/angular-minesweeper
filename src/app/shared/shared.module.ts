@@ -6,6 +6,6 @@ import { PressEventIndicatorDirective } from './directives/press-event-indicator
 @NgModule({
   declarations: [StopwatchPipe, PressEventIndicatorDirective],
   imports: [CommonModule],
-  exports: [StopwatchPipe, PressEventIndicatorDirective]
+  exports: [CommonModule, StopwatchPipe, PressEventIndicatorDirective]
 })
 export class SharedModule { }

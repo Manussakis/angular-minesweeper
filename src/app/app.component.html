@@ -40,9 +40,15 @@
             <div class="board__inner" (contextmenu)="onContextMenu($event)">
                 <section *ngFor="let row of boardParsed; trackBy: trackByRow" class="row">
                     <app-cell *ngFor="let cell of row; trackBy: trackByCell"
-                        [cell]="cell" (open)="onOpenCell($event)"
+                        [cell]="cell"
+                        [vertical]="vertical"
+                        [horizontal]="horizontal"
+                        (open)="onOpenCell($event)"
                         (changeFlagsAvailable)="onChangeFlagsAvailable($event)"
-                        (changeEmojiFace)="onChangeEmojiFace($event)">
+                        (changeEmojiFace)="onChangeEmojiFace($event)"
+                        (focusCell)="onFocusCell($event)"
+                        (focusBoardFace)="onFocusBoardFace()"
+                        (focusResetButton)="onFocusResetButton()">
                     </app-cell>
                 </section>
             </div>

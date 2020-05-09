@@ -1,12 +1,14 @@
 import { BrowserModule, HammerModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule, Injectable } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppComponent } from './app.component';
-import { CellComponent } from './cell/cell.component';
+
 import * as Hammer from 'hammerjs';
-import { BestScoresTableModule } from './best-scores-table/best-scores-table.module';
-import { SharedModule } from './shared/shared.module';
+
+import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { BestScoresTableModule } from './best-scores-table/best-scores-table.module';
+import { CellModule } from './cell/cell.module';
 
 @Injectable()
 export class MinesweeperHammerConfig extends HammerGestureConfig {
@@ -21,7 +23,6 @@ export class MinesweeperHammerConfig extends HammerGestureConfig {
 @NgModule({
     declarations: [
         AppComponent,
-        CellComponent,
     ],
     imports: [
         BrowserModule,
@@ -30,6 +31,7 @@ export class MinesweeperHammerConfig extends HammerGestureConfig {
         CoreModule,
         SharedModule,
         BestScoresTableModule,
+        CellModule,
     ],
     bootstrap: [AppComponent],
     providers: [{

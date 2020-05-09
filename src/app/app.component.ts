@@ -33,10 +33,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     timer: number = 0;
     emojiFace$ = this._minesweeper.emojiFace$;
     gameCommandsModalIsOpen: boolean;
+    horizontal: number;
+    vertical: number;
 
     private _gameCommandsModalIsOpen$ = new BehaviorSubject(false);
-    private _horizontal: number;
-    private _vertical: number;
     private _minesLength: number;
     private _gameLevel$ = new BehaviorSubject<GameLevelEnum>(GameLevelEnum.Easy);
     private _timerSub: Subscription;
@@ -46,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         private _minesweeper: MinesweeperService,
         private _score: ScoreService,
         private _renderer2: Renderer2,
+        private _elementRef: ElementRef
     ) {
         this._unsubscribeAll = new Subject();
     }
@@ -63,16 +64,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(gameLevelSelected => {
                 if (gameLevelSelected === GameLevelEnum.Easy) {
-                    this._vertical = 9;
-                    this._horizontal = 9;
+                    this.vertical = 9;
+                    this.horizontal = 9;
                     this._minesLength = 10;
                 } else if (gameLevelSelected === GameLevelEnum.Medium) {
-                    this._vertical = 16;
-                    this._horizontal = 16;
+                    this.vertical = 16;
+                    this.horizontal = 16;
                     this._minesLength = 40;
                 } else if (gameLevelSelected === GameLevelEnum.Hard) {
-                    this._vertical = 16;
-                    this._horizontal = 30;
+                    this.vertical = 16;
+                    this.horizontal = 30;
                     this._minesLength = 99;
                 }
 
@@ -135,7 +136,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     createNewEmptyBoard(): void {
-        this._minesweeper.newEmptyBoard(this._vertical, this._horizontal, this._minesLength);
+        this._minesweeper.newEmptyBoard(this.vertical, this.horizontal, this._minesLength);
         this._minesweeper.isFirstClickInCell = true;
         this._unsubscribeTimer();
         this.timer = 0;
@@ -189,6 +190,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         return false;
     }
 
+    onFocusCell(event) {
+        const nextCell = this._elementRef.nativeElement.querySelector(`[data-i="${event}"]`);
+        nextCell.focus();
+    }
+
+    onFocusBoardFace() {
+        setTimeout(() => this.boardFace.nativeElement.focus(), 200);
+    }
+
+    onFocusResetButton() {
+        setTimeout(() => this.resetButton.nativeElement.focus(), 200);
+    }
+
     trackByRow(index: number, element: ICellData[]): number {
         return index;
     }
@@ -207,7 +221,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                     type: board[y][x],
                     y: y,
                     x: x,
-                    i: (y * this._horizontal) + x,
+                    i: (y * this.horizontal) + x,
                     label: '',
                     isOpened: false,
                     isMine: false,
