@@ -4,7 +4,7 @@ import { takeUntil, distinctUntilChanged, filter, skip, delay, take } from 'rxjs
 import { MinesweeperService } from './core/minesweeper.service';
 import { ScoreService } from './core/score.service';
 import { GameStatusEnum, EmojisEnum, GameLevelEnum, CellCodeEnum } from './enums';
-import { ICellStructure as ICellData, IBoardData } from './interfaces';
+import { ICellStructure, IBoardData } from './interfaces';
 import { AROUND_CELL_OPERATORS } from './consts';
 
 @Component({
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    boardParsed: ICellData[][] = [];
+    boardParsed: ICellStructure[][] = [];
     gameLevel: GameLevelEnum;
     gameStatus: string | undefined;
     flagsAvailable$: Observable<number>;
@@ -203,18 +203,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         setTimeout(() => this.resetButton.nativeElement.focus(), 200);
     }
 
-    trackByRow(index: number, element: ICellData[]): number {
+    trackByRow(index: number, element: ICellStructure[]): number {
         return index;
     }
 
-    trackByCell(index: number, element: ICellData): number {
+    trackByCell(index: number, element: ICellStructure): number {
         return element.i;
     }
 
     private _parseBoard(board: number[][]): void {
         this.boardParsed = [];
         for (let y = 0; y < board.length; y++) {
-            const row: ICellData[] = [];
+            const row: ICellStructure[] = [];
 
             for (let x = 0; x < board[y].length; x++) {
                 row.push({
@@ -278,7 +278,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         minesweeper.setRemainEmptyCells(remainEmptyCells);
     }
 
-    private _openCellsAroundZero(clickedCellData: ICellData): void {
+    private _openCellsAroundZero(clickedCellData: ICellStructure): void {
         clickedCellData.isCenterZero = true;
 
         while (clickedCellData) {
@@ -389,7 +389,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             cellAroundCoords[1] >= 0 && cellAroundCoords[1] < this._minesweeper.horizontal;
     }
 
-    private _findCellDataByKeyValue(key: string, value: any): ICellData {
+    private _findCellDataByKeyValue(key: string, value: any): ICellStructure {
         for (let y = 0; y < this.boardParsed.length; y++) {
             const row = this.boardParsed[y];
             const cellData = row.find(cell => cell[key] === value);
@@ -402,7 +402,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         return undefined;
     }
 
-    private _findAllCellDataByKeyValeu(key: string, value: any): ICellData[] {
+    private _findAllCellDataByKeyValeu(key: string, value: any): ICellStructure[] {
         let finalArr = [];
         for (let y = 0; y < this.boardParsed.length; y++) {
             const row = this.boardParsed[y];
@@ -418,7 +418,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         return finalArr;
     }
 
-    private _getCellDataByCoord(cellCoord: number[]): ICellData {
+    private _getCellDataByCoord(cellCoord: number[]): ICellStructure {
         return this.boardParsed[cellCoord[0]][cellCoord[1]];
     }
 }
