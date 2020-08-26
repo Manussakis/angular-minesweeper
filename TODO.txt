@@ -1,0 +1,10 @@
+Performance
+- Criar um componente board e remover a lógica do component app
+
+Usabilidade
+- Ao perder um game focar no botão ou no emoji de novo jogo
+- Remover os target blank, acessibilidade
+- Quando o tempo der 999 encerrar o jogo
+
+Teste
+- Criar mais testes
