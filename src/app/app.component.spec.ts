@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { of } from 'rxjs';
 import { IBoardData } from './interfaces';
@@ -20,7 +20,7 @@ describe('AppComponent', () => {
     let mockMinesweeperService;
     let mockScoreService;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         mockMinesweeperService = {
             boardHasChanded$: of(<IBoardData>{
                 board: [

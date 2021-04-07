@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CellComponent } from './cell.component';
 import { MinesweeperService } from '../core/minesweeper.service';
@@ -20,7 +20,7 @@ describe('CellComponent', () => {
         openedIdClassName: 'opened-1',
     };
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         mockMinesweeperService = jasmine.createSpyObj(['']);
 
         TestBed.configureTestingModule({

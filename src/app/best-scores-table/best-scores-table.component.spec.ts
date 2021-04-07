@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { of } from 'rxjs';
 
@@ -11,7 +11,7 @@ describe('BestScoresTableComponent', () => {
     let fixture: ComponentFixture<BestScoresTableComponent>;
     let mockScoreService;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         mockScoreService = {
             bestScores$: of({ easy: 35, medium: 100, hard: 200 })
         };
