@@ -9,7 +9,11 @@
     (click)="onClick()"
     (mousedown)="onMouseDown($event)"
     (mouseup)="onMouseUp($event)"
-    (contextmenu)="onContextMenu($event)"    
+    (contextmenu)="onContextMenu($event)"
+    [ngStyle]="{
+        'width.px': smallScreenCellSize,
+        'height.px': smallScreenCellSize
+    }"
     [ngClass]="{
         'opened': cell.isOpened,
         'flag': cell.label === 'F',

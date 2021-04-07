@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2, HostListener, ViewEncapsulation, AfterViewInit } from '@angular/core';
-import { Subject, Observable, Subscription, timer, BehaviorSubject } from 'rxjs';
-import { takeUntil, distinctUntilChanged, filter, skip, delay, take } from 'rxjs/operators';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { Subject, Observable, Subscription, timer, BehaviorSubject, fromEvent, merge } from 'rxjs';
+import { takeUntil, distinctUntilChanged, filter, skip, delay, take, debounceTime, map } from 'rxjs/operators';
 import { MinesweeperService } from './core/minesweeper.service';
 import { ScoreService } from './core/score.service';
 import { GameStatusEnum, EmojisEnum, GameLevelEnum, CellCodeEnum } from './enums';
@@ -14,7 +15,7 @@ import { AROUND_CELL_OPERATORS } from './consts';
     encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
-    @ViewChild('boardDOM') boardDOM: ElementRef;
+    @ViewChild('boardInner') boardInner: ElementRef;
     @ViewChild('resetButton') resetButton: ElementRef;
     @ViewChild('boardFace') boardFace: ElementRef;
     @ViewChild('commandsModalButton') commandsModalButton: ElementRef;
@@ -35,20 +36,33 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     gameCommandsModalIsOpen: boolean;
     horizontal: number;
     vertical: number;
+    smallScreenCellSize: number;
 
     private _gameCommandsModalIsOpen$ = new BehaviorSubject(false);
     private _minesLength: number;
     private _gameLevel$ = new BehaviorSubject<GameLevelEnum>(GameLevelEnum.Easy);
     private _timerSub: Subscription;
+    private _activeMqAlias: string;
     private _unsubscribeAll: Subject<any>;
+    private _isFirstLoad: boolean = true;
 
     constructor(
         private _minesweeper: MinesweeperService,
         private _score: ScoreService,
         private _renderer2: Renderer2,
-        private _elementRef: ElementRef
+        private _elementRef: ElementRef,
+        mediaObserver: MediaObserver
     ) {
         this._unsubscribeAll = new Subject();
+        mediaObserver.asObservable()
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                filter((change: MediaChange[]) => change.length > 0),
+                map((change: MediaChange[]) => change[0])
+            )
+            .subscribe((change: MediaChange) => {
+                this._activeMqAlias = change.mqAlias;
+            });
     }
 
     ngOnInit(): void {
@@ -80,6 +94,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.gameLevel = gameLevelSelected;
                 this.createNewEmptyBoard();
                 this.flagsAvailable$ = this._minesweeper.flagsAvailable$;
+                if (!this._isFirstLoad) {
+                    this.setSmallScreenCellSize();                    
+                }                
             });
 
         this._minesweeper.gameStatus$
@@ -111,10 +128,28 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 distinctUntilChanged(),
                 filter(length => length === 0)
             )
-            .subscribe(() => this._minesweeper.setGameStatus(GameStatusEnum.Won));        
+            .subscribe(() => this._minesweeper.setGameStatus(GameStatusEnum.Won));
+        
+        const allWindowSizeEvents$ = merge(
+            fromEvent(window, 'resize'),
+            fromEvent(window, 'orientationchange')
+        );
+        
+        allWindowSizeEvents$
+            .pipe(
+                debounceTime(500)
+            )
+            .subscribe(() => {
+                this.setSmallScreenCellSize();
+            });
     }
 
     ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.setSmallScreenCellSize();
+            this._isFirstLoad = false;
+        }, 0);        
+
         this._gameCommandsModalIsOpen$
             .pipe(skip(1))
             .subscribe(state => {
@@ -126,13 +161,28 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
                 } else {
                     setTimeout(this.commandsButton.nativeElement.focus(), 200);
                 }
-            });
+            });        
     }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
         this._timerSub.unsubscribe();
+    }
+
+    setSmallScreenCellSize() {                
+        const boardW = this.boardInner.nativeElement.offsetWidth;
+        const cellPossibleSize = boardW / this._minesweeper.horizontal;
+
+        if (this._activeMqAlias === 'xs' && this.gameLevel === GameLevelEnum.Easy) {
+            if (cellPossibleSize < this._minesweeper.cellMaxSize){
+                this.smallScreenCellSize = cellPossibleSize;
+            } else {
+                this.smallScreenCellSize = null;
+            }
+        } else {
+            this.smallScreenCellSize = null;
+        }     
     }
 
     createNewEmptyBoard(): void {

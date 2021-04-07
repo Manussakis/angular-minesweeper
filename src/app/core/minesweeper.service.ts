@@ -9,6 +9,7 @@ export class MinesweeperService {
     vertical: number;
     horizontal: number;
     minesLenght: number;
+    cellMaxSize: number = 44;
 
     private _board: number[][] | any[][];
     private _boardData$ = new Subject<IBoardData>();

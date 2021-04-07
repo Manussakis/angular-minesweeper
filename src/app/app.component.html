@@ -36,13 +36,14 @@
             </div>
         </header>
 
-        <main class="board__main" [ngClass]="[gameStatus ? gameStatus : '']" #boardDOM>
-            <div class="board__inner" (contextmenu)="onContextMenu($event)">
+        <main class="board__main" [ngClass]="[gameStatus ? gameStatus : '']">
+            <div class="board__inner" (contextmenu)="onContextMenu($event)" #boardInner>
                 <section *ngFor="let row of boardParsed; trackBy: trackByRow" class="row">
                     <app-cell *ngFor="let cell of row; trackBy: trackByCell"
                         [cell]="cell"
                         [vertical]="vertical"
                         [horizontal]="horizontal"
+                        [smallScreenCellSize]="smallScreenCellSize"
                         (open)="onOpenCell($event)"
                         (changeFlagsAvailable)="onChangeFlagsAvailable($event)"
                         (changeEmojiFace)="onChangeEmojiFace($event)"

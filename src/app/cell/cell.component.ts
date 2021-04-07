@@ -1,4 +1,4 @@
-import { Component, Input, Host, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, ViewEncapsulation, SimpleChanges, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MinesweeperService } from '../core/minesweeper.service';
 import { EmojisEnum, CellCodeEnum, GameStatusEnum } from '../enums';
@@ -15,6 +15,7 @@ export class CellComponent implements OnChanges {
     @Input() cell: ICellStructure;
     @Input() horizontal: number;
     @Input() vertical: number;
+    @Input() smallScreenCellSize: number;
 
     @Output() open = new EventEmitter<number[]>();
     @Output() changeFlagsAvailable = new EventEmitter<number>();
