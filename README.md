@@ -5,7 +5,7 @@ A different version of the classic Minesweeper game built with Angular.
 
 ### [Play the game](https://ofcode.com.br/projects/minesweeper)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.1.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.7.
 
 ## Development server
 
